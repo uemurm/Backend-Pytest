@@ -30,7 +30,7 @@ def dummyjson_client(session: requests.Session) -> BaseApiClient:
 # auto_use is True for fixtures that should be done before/after every test.
 # No need to be passed on to test functions as an argument.
 @pytest.fixture(autouse=True)
-def debug_on_failure(request, httpbin_client, dummyjson_client):
+def debug_on_failure(request, httpbin_client, dummyjson_client, todo_client):
     """
     Print last API request and response if a test fails.
     Automatically run for any tests because auto_use is True。
@@ -38,7 +38,7 @@ def debug_on_failure(request, httpbin_client, dummyjson_client):
     yield  # Control passed to the test function
 
     # Teardown is done here, irrespective of pass/fail of the test.
-    clients = [httpbin_client, dummyjson_client]
+    clients = [httpbin_client, dummyjson_client, todo_client]
 
     # Always print out the latest request as it's hard to detect test failure.
     # Need to add -rF option to actually output to the console.

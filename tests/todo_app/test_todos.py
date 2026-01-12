@@ -9,12 +9,14 @@ class TestTodoApp:
     def managed_todo_id(self, todo_client: BaseApiClient):
         """ Manage Todo ID's then delete after tests"""
         todo_id = 101
-        todo_client.delete(f'todos/{todo_id}')
+        # Use session directly to avoid overwriting last_request/response
+        url = f'{todo_client.base_url}/todos/{todo_id}'
+        todo_client.session.delete(url)
         
         yield todo_id
         
         # Teardown
-        todo_client.delete(f'todos/{todo_id}')
+        todo_client.session.delete(url)
 
     def test_create_and_get_todo(self, todo_client: BaseApiClient, managed_todo_id: int):
         """
