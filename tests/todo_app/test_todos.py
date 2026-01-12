@@ -1,15 +1,27 @@
+import pytest
 from todo_app import Todo
 from api_client.base import BaseApiClient
 
 
 class TestTodoApp:
-    
-    def test_create_and_get_todo(self, todo_client: BaseApiClient):
+
+    @pytest.fixture
+    def managed_todo_id(self, todo_client: BaseApiClient):
+        """ Manage Todo ID's then delete after tests"""
+        todo_id = 101
+        todo_client.delete(f'todos/{todo_id}')
+        
+        yield todo_id
+        
+        # Teardown
+        todo_client.delete(f'todos/{todo_id}')
+
+    def test_create_and_get_todo(self, todo_client: BaseApiClient, managed_todo_id: int):
         """
         Verify if a Todo is created then retrieved.
         """
         new_todo = {
-            "id": 101,
+            "id": managed_todo_id,
             "title": "Learn Pytest",
             "completed": False
         }
@@ -19,7 +31,7 @@ class TestTodoApp:
 
         # Verify if the response comply with Todo model.
         created_todo = Todo(**post_res.json())
-        assert created_todo.id == 101
+        assert created_todo.id == managed_todo_id
         assert created_todo.title == 'Learn Pytest'
         assert created_todo.completed is False
 
@@ -27,13 +39,13 @@ class TestTodoApp:
         get_res = todo_client.get('todos')
         assert get_res.status_code == 200
         
-        # リストの中に先ほど作成した Todo が含まれているか確認
+        # Verify that the list contains the Todo created earlier.
         todos = [Todo(**item) for item in get_res.json()]
-        # ID が 101 のものを探す
-        target_todo = next((t for t in todos if t.id == 101), None)
-        
+        # Find an item with ID being `managed_todo_id`
+        target_todo = next((t for t in todos if t.id == managed_todo_id), None)
+
         assert target_todo is not None
-        assert target_todo.title == "Learn Pytest"
+        assert dict(target_todo) == new_todo
 
     def test_delete_todo(self, todo_client: BaseApiClient):
         """
@@ -43,7 +55,7 @@ class TestTodoApp:
         todo_id = 999
         todo_client.post("todos", json={"id": todo_id, "title": "To be deleted", "completed": True})
 
-        del_res = todo_client.session.delete(f"{todo_client.base_url}/todos/{todo_id}")
+        del_res = todo_client.delete(f'todos/{todo_id}')
         assert del_res.status_code == 204
         
         # There should be no Todo with the ID.

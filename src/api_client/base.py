@@ -31,3 +31,11 @@ class BaseApiClient:
         response = self.session.post(url, timeout=self.timeout_s, **kwargs)
         self.last_response = response
         return response
+
+    def delete(self, path: str, **kwargs) -> requests.Response:
+        url = self._url(path)
+        self.last_request = {'method': 'DELETE', 'url': url, 'kwargs': kwargs}
+
+        response = self.session.delete(url, timeout=self.timeout_s, **kwargs)
+        self.last_response = response
+        return response
