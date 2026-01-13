@@ -1,5 +1,7 @@
+import os
 import pytest
 import requests
+from dotenv import load_dotenv
 
 from api_client.base import BaseApiClient
 
@@ -9,22 +11,28 @@ def session() -> requests.Session:
     return requests.Session()
 
 
+# Load environment variables from .env file if present
+load_dotenv()
+
 @pytest.fixture(scope="session")
 def todo_client(session: requests.Session) -> BaseApiClient:
-    """ローカルで起動している Todo アプリ向けのクライアント"""
-    return BaseApiClient(base_url="http://127.0.0.1:8000", session=session, timeout_s=5)
+    """A client for a Todo app running on localhost"""
+    base_url = os.getenv('TODO_API_URL', 'http://127.0.0.1:8000')
+    return BaseApiClient(base_url=base_url, session=session, timeout_s=5)
 
 
 # The client is created only once for a run of the entire tests.
 # Will be created for each test method if it's "function"
 @pytest.fixture(scope="session")
 def httpbin_client(session: requests.Session) -> BaseApiClient:
-    return BaseApiClient(base_url="https://httpbin.org", session=session, timeout_s=10)
+    base_url = os.getenv('HTTPBIN_URL', 'https://httpbin.org')
+    return BaseApiClient(base_url=base_url, session=session, timeout_s=10)
 
 
 @pytest.fixture(scope="session")
 def dummyjson_client(session: requests.Session) -> BaseApiClient:
-    return BaseApiClient(base_url="https://dummyjson.com", session=session, timeout_s=10)
+    base_url = os.getenv('DUMMYJSON_URL', 'https://dummyjson.com')
+    return BaseApiClient(base_url=base_url, session=session, timeout_s=10)
 
 
 # auto_use is True for fixtures that should be done before/after every test.
