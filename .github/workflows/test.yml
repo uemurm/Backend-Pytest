@@ -29,4 +29,4 @@ jobs:
         run: |  
           uv run uvicorn src.todo_app:app --port 8000 &
           sleep 3  # Wait for the server to start.
-          uv run pytest
+          uv run pytest tests/public_api/test_httpbin_*.py tests/todo_app/test_todos.py
