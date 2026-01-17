@@ -5,9 +5,10 @@
 ### 🎯 Goal
 - Verify the startup instructions in the README.md.
 - Update the file accordingly.
+- Set up GitHub Actions to run tests when pushing.
 
 ### 📝 Notes
-- git cloned and ran tests.
+- git cloned and ran tests from scratch.
 
 ### 🚧 Challenges & Solutions
 - **Problem**: `ModuleNotFoundError: No module named 'jsonschema'`
