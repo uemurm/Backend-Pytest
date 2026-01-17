@@ -1,8 +1,5 @@
-import json
-from pathlib import Path
-
 import pytest
-from jsonschema import validate
+from pydantic import BaseModel, HttpUrl
 
 
 def test_dummyjson_list_products_has_items(dummyjson_client):
@@ -15,13 +12,27 @@ def test_dummyjson_list_products_has_items(dummyjson_client):
     assert len(body["products"]) > 0
 
 
+class Product(BaseModel):
+    id: int
+    title: str
+    description: str
+    price: float
+    discountPercentage: float
+    rating: float
+    stock: int
+    brand: str | None = None
+    category: str
+    thumbnail: HttpUrl
+    images: list[HttpUrl]
+
+
 @pytest.mark.regression
 def test_dummyjson_get_product_matches_schema(dummyjson_client):
     r = dummyjson_client.get("/products/1")
     assert r.status_code == 200
 
-    product = r.json()
-
-    schema_path = Path(__file__).resolve().parents[1] / "schemas" / "dummyjson_product.schema.json"
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    validate(instance=product, schema=schema)
+    # Run validation using Pydantic model defined above.
+    # The validation passes by default even if undefined fields are included in the response.
+    product = Product(**r.json())
+    
+    assert product.id == 1
