@@ -1,0 +1,10 @@
+services:
+  todo-app:
+    build: .
+    ports:
+      - "8000:8000"
+    # Fix the container name for easier management
+    container_name: todo-app-container
+    # Mount source code for development (optional)
+    volumes:
+      - ./src:/app/src

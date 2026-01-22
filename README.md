@@ -40,14 +40,9 @@ uv run uvicorn src.todo_app:app --reload
 
 ### Option B: Docker Execution
 
-1. **Build the image**:
+Run the application using Docker Compose:
    ```bash
-   docker build --tag todo-app .
-   ```
-
-2. **Run the container**:
-   ```bash
-   docker run --publish 8000:8000 todo-app
+   docker compose up --build
    ```
 
 ---

@@ -1,7 +1,7 @@
 # 1. Specify the base image (lightweight version of Python 3.12)
 FROM python:3.12-slim
 
-# 2. Install uv (copy binary from the official image)
+# 2. Install uv (copy binary from the official image in GHCR (GitHub Container Registry))
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # 3. Set the working directory
@@ -15,7 +15,7 @@ COPY pyproject.toml uv.lock ./
 # --no-dev: Do not install development dependencies (for production)
 RUN uv sync --frozen --no-dev
 
-# 6. Copy the source code
+# 6. Copy the source code to the image
 COPY src ./src
 
 # 7. Set environment variables (add .venv to PATH for easier command access)
