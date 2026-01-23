@@ -39,7 +39,7 @@ This runs the API server and tests in isolated containers.
 
 **1. Run the API Server**
 ```bash
-docker compose up --build
+docker compose up --build todo-app
 ```
 To stop the service, press `Ctrl+C` or run:
 ```bash
