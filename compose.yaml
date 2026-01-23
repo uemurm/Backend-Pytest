@@ -3,8 +3,25 @@ services:
     build: .
     ports:
       - "8000:8000"
-    # Fix the container name for easier management
-    container_name: todo-app-container
+    # Spaces are not allowed for container names
+    container_name: 'Todo_app'
     # Mount source code for development (optional)
     volumes:
       - ./src:/app/src
+
+  # Service for running tests
+  tester:
+    build: .
+    container_name: 'Todo_tests'
+    # Wait for the app to start
+    depends_on:
+      - todo-app
+    # Mount tests and config to run them without rebuilding
+    volumes:
+      - ./tests:/app/tests
+      - ./pytest.ini:/app/pytest.ini
+    # Override the API URL to point to the container service name
+    environment:
+      - TODO_API_URL=http://todo-app:8000
+    # Override the default command to run pytest
+    command: uv run pytest --verbose

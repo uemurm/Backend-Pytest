@@ -1,7 +1,11 @@
 # Daily Journal
 
+## 2026-01-23 Fri
+* Created another container for pytest as well.
+
 ## 2026-01-22 Thu 
 * Use Docker compose on top of Docker.
+* Add tests of requests resulting in errors.
 
 ### Key Takeaways
 GitHub Actions での実行環境の詳細:
@@ -33,6 +37,6 @@ GitHub Actions での実行環境の詳細:
 - **Solution**: Added Todo below instead of `uv add jsonschema` to add the missing dependency.
 
 # Todo's
-- [ ] Dockerise pytest as well.
+- [x] Dockerise pytest as well.
 - [ ] Start Docker container on GitHub Actions and run tests.
 - [X] Refactor test_dummyjson_product.py by replacing jsonschema with Pydantic.

@@ -8,9 +8,11 @@ This repository is a learning + portfolio project to practice backend/API test a
 
 ## Requirements
 - Windows (or macOS/Linux)
-- [uv](https://github.com/astral-sh/uv) installed
+- Docker (Recommended)
+
+### For Local Development
 - Python 3.12
-- Docker (optional, for containerised execution)
+- [uv](https://github.com/astral-sh/uv) installed
 
 ## Setup
 
@@ -20,49 +22,51 @@ This repository is a learning + portfolio project to practice backend/API test a
    cd Backend-Pytest
    ```
 
-2. **Install dependencies**
+2. **Install dependencies (Local Dev Only)**
    This project uses `uv` for dependency management.
    ```bash
    uv sync
    ```
-   This command will create a virtual environment (`.venv`) and install all required packages defined in `pyproject.toml`.
+   This command will create a virtual environment (`.venv/`) and install all required packages defined in `pyproject.toml`.
 
-## Running the Application
+## Workflow
 
-You can run the FastAPI server either locally or using Docker.
+You can run the application and tests either using **Docker Compose** (recommended) or **Locally**.
 
-### Option A: Local Execution
+### Option 1: Using Docker Compose (Recommended)
 
-Start the server using `uv`:
+This runs the API server and tests in isolated containers.
+
+**1. Run the API Server**
 ```bash
-uv run uvicorn src.todo_app:app --reload
+docker compose up --build
 ```
-
-### Option B: Docker Execution
-
-Run the application using Docker Compose:
-   ```bash
-   docker compose up --build
-   ```
+To stop the service, press `Ctrl+C` or run:
+```bash
+docker compose down
+```
 
 ---
 
 The API will be available at `http://127.0.0.1:8000`.
 Interactive docs: `http://127.0.0.1:8000/docs`
 
-## Running Tests
-
-Run all tests with pytest:
+**2. Run Tests**
+To run tests in a containerised environment and stop the app automatically after tests finish:
 ```bash
-uv run pytest
+docker compose up --build --abort-on-container-exit
 ```
-Or activate the virtual environment first:
-```bash
-# Windows (PowerShell)
-.venv\Scripts\activate
 
-# Run tests
-pytest
+### Option 2: Local Execution
+
+**1. Start the API Server**
+```bash
+uv run uvicorn src.todo_app:app --reload
+```
+
+**2. Run Tests**
+```bash
+uv run pytest --verbose
 ```
 
 ## Project Structure
@@ -70,3 +74,4 @@ pytest
 - `tests/`: Test files
 - `pyproject.toml`: Project configuration and dependencies
 - `Dockerfile`: Container definition for the application
+- `compose.yaml`: Docker Compose configuration
