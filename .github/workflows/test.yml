@@ -7,9 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-  test: # 'test' is the Job ID
+  # Job 1: Run tests directly on the VM (faster, good for quick feedback)
+  test-on-vm:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -28,5 +28,16 @@ jobs:
         # The string will be fed to the shell on the virtual machine.
         run: |  
           uv run uvicorn src.todo_app:app --port 8000 &
-          sleep 3  # Wait for the server to start.
+          sleep 3
           uv run pytest --maxfail=1 --verbose
+
+  # Job 2: Run tests using Docker Compose (ensures environment consistency)
+  test-using-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests with Docker Compose
+        # --abort-on-container-exit: Stops all containers when the test container finishes.
+        # --exit-code-from tester: Returns the exit code of the 'tester' service (pass/fail).
+        run: docker compose up --build --abort-on-container-exit --exit-code-from tester
