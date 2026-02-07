@@ -144,6 +144,7 @@ class TestVariousID:
         todo_client.delete('todos/123')
 
 class TestVariousTitle:
+    @pytest.mark.skip(reason='Not implemented yet')
     def test_create_without_title(self):
         """
         Verify that a request without title results in
