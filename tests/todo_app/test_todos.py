@@ -52,23 +52,7 @@ class TestTodoOperations:
         # Pydantic v2 way to dump model to dict
         assert target_todo.model_dump() == new_todo
 
-    def test_delete_todo(self, todo_client: BaseApiClient):
-        """
-        Verify if Todo can be deleted.
-        """
-        # Create a Todo to be deleted.
-        todo_id = 999
-        todo_client.post("todos", json={"id": todo_id, "title": "To be deleted", "completed": True})
-
-        del_res = todo_client.delete(f'todos/{todo_id}')
-        assert del_res.status_code == 204
-        
-        # There should be no Todo with the ID.
-        get_res = todo_client.get("todos")
-        todos = [Todo(**item) for item in get_res.json()]
-        assert not any(t.id == todo_id for t in todos)
-
-    def test_create_todo_defaults(self, todo_client: BaseApiClient):
+    def test_create_todo_default_values(self, todo_client: BaseApiClient):
         """
         Verify that 'completed' defaults to False if missing.
         """
@@ -83,6 +67,100 @@ class TestTodoOperations:
 
         # Cleanup
         todo_client.delete(f'todos/{created.id}')
+
+    class TestVariousID:
+        def test_create_without_id(self, todo_client: BaseApiClient):
+            """
+            Verify that a request without ID results in Unprocessable Entity (422)
+            """
+            new_todo = {
+                'title': 'Learn Pytest',
+                'completed': False,
+            }
+
+            post_res = todo_client.post('todos', json=new_todo)
+            assert post_res.status_code == 422
+
+        def test_create_with_id_0(self, todo_client: BaseApiClient):
+            """
+            Verify that a request with ID being 0 results in Created (201)
+            """
+            new_todo = {
+                'id': 0,
+                'title': 'Learn Pytest',
+                'completed': False,
+            }
+
+            post_res = todo_client.post('todos', json=new_todo)
+            assert post_res.status_code == 201
+
+        def test_create_with_negative_id(self, todo_client: BaseApiClient):
+            """
+            Verify that a request with ID being -1 results in Unprocessable Entity (422)
+            """
+            new_todo = {
+                'id': -1,
+                'title': 'Learn Pytest',
+                'completed': False,
+            }
+
+            post_res = todo_client.post('todos', json=new_todo)
+            assert post_res.status_code == 422
+
+        def test_create_with_string_id(self, todo_client: BaseApiClient):
+            """
+            Verify that a request with ID being 'foo' results in Unprocessable Entity (422)
+            """
+            new_todo = {
+                'id': 'foo',
+                'title': 'Learn Pytest',
+                'completed': False,
+            }
+
+            post_res = todo_client.post('todos', json=new_todo)
+            assert post_res.status_code == 422
+
+        def test_create_with_id_being_numerical_string(self, todo_client: BaseApiClient):
+            """
+            Verify that a request with ID being '123'
+            """
+            new_todo = {
+                'id': '123',
+                'title': 'Learn Pytest',
+                'completed': False,
+            }
+
+            post_res = todo_client.post('todos', json=new_todo)
+            assert post_res.status_code == 201
+
+            # Verify if the response comply with Todo model.
+            created_todo = Todo(**post_res.json())
+            assert created_todo.id == int(new_todo['id'])
+            assert created_todo.title == new_todo['title']
+            assert created_todo.completed is new_todo['completed']
+
+    class TestVariousTitle:
+        def test_create_without_title(self):
+            """
+            Verify that a request without title results in
+            """
+            pass
+
+    def test_delete_todo(self, todo_client: BaseApiClient):
+        """
+        Verify if Todo can be deleted.
+        """
+        # Create a Todo to be deleted.
+        todo_id = 999
+        todo_client.post("todos", json={"id": todo_id, "title": "To be deleted", "completed": True})
+
+        del_res = todo_client.delete(f'todos/{todo_id}')
+        assert del_res.status_code == 204
+
+        # There should be no Todo with the ID.
+        get_res = todo_client.get("todos")
+        todos = [Todo(**item) for item in get_res.json()]
+        assert not any(t.id == todo_id for t in todos)
 
 
 class TestTodoErrors:

@@ -1,5 +1,11 @@
 # Daily Journal
 
+## 2026-02-06 Fri
+* 抜けているテスト項目を洗い出した。
+
+## 2026-01-26 Mon Australia Day
+* Updated workflow file to run tests on GitHub Actions using Docker Compose.
+
 ## 2026-01-23 Fri
 * Created another container for pytest as well.
 
@@ -38,5 +44,5 @@ GitHub Actions での実行環境の詳細:
 
 # Todo's
 - [x] Dockerise pytest as well.
-- [ ] Start Docker container on GitHub Actions and run tests.
+- [x] Run tests on GitHub Actions using Docker Compose 
 - [X] Refactor test_dummyjson_product.py by replacing jsonschema with Pydantic.
