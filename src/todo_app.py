@@ -1,11 +1,11 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
 # Define Pydantic model for request/response validations.
 class Todo(BaseModel):
-    id: int
+    id: int = Field(ge=0)   # Greater than or Equal to 0.
     title: str
     completed: bool = False
 
