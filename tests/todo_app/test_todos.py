@@ -93,6 +93,8 @@ class TestVariousID:
         post_res = todo_client.post('todos', json=new_todo)
         assert post_res.status_code == 201
 
+        todo_client.delete('todos/0')
+
     def test_create_with_negative_id(self, todo_client: BaseApiClient):
         """
         Verify that a request with ID being -1 results in Unprocessable Entity (422)
@@ -138,6 +140,8 @@ class TestVariousID:
         assert created_todo.title == new_todo['title']
         assert created_todo.completed is new_todo['completed']
 
+        # ２度目の実行でFailした後、これを付け加えた直後の実行では、redundant ID で落ちると思ったのに通ってしまう！
+        todo_client.delete('todos/123')
 
 class TestVariousTitle:
     def test_create_without_title(self):
