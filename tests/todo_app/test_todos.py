@@ -1,5 +1,5 @@
 import pytest
-from todo_app import Todo
+from todo_app import TodoSchema
 from api_client.base import BaseApiClient
 
 
@@ -31,7 +31,7 @@ def test_create_and_get_todo(todo_client: BaseApiClient, managed_todo_id: int):
     assert post_res.status_code == 201
 
     # Verify if the response comply with Todo model.
-    created_todo = Todo(**post_res.json())
+    created_todo = TodoSchema(**post_res.json())
     assert created_todo.id == managed_todo_id
     assert created_todo.title == 'Learn Pytest'
     assert created_todo.completed is False
@@ -41,7 +41,7 @@ def test_create_and_get_todo(todo_client: BaseApiClient, managed_todo_id: int):
     assert get_res.status_code == 200
 
     # Verify that the list contains the Todo created earlier.
-    todos = [Todo(**item) for item in get_res.json()]
+    todos = [TodoSchema(**item) for item in get_res.json()]
     # Find an item with ID being `managed_todo_id`
     target_todo = next((t for t in todos if t.id == managed_todo_id), None)
 
@@ -60,7 +60,7 @@ def test_create_todo_default_values(todo_client: BaseApiClient):
     res = todo_client.post('todos', json=new_todo)
     assert res.status_code == 201
 
-    created = Todo(**res.json())
+    created = TodoSchema(**res.json())
     assert created.completed is False
 
     # Cleanup
@@ -135,7 +135,7 @@ class TestVariousID:
         assert post_res.status_code == 201
 
         # Verify if the response comply with Todo model.
-        created_todo = Todo(**post_res.json())
+        created_todo = TodoSchema(**post_res.json())
         assert created_todo.id == int(new_todo['id'])
         assert created_todo.title == new_todo['title']
         assert created_todo.completed is new_todo['completed']
@@ -165,7 +165,7 @@ def test_delete_todo(todo_client: BaseApiClient):
 
     # There should be no Todo with the ID.
     get_res = todo_client.get("todos")
-    todos = [Todo(**item) for item in get_res.json()]
+    todos = [TodoSchema(**item) for item in get_res.json()]
     assert not any(t.id == todo_id for t in todos)
 
 

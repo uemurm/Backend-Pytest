@@ -1,27 +1,56 @@
 services:
+  # 1. Database Service (PostgreSQL)
+  db:
+    image: postgres:15
+    container_name: Todo_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todo_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U user -d todo_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. API Service
   todo-app:
     build: .
     ports:
-      - "8000:8000"
-    # Spaces are not allowed for container names
-    container_name: 'Todo_app'
+      - '8000:8000'
+    container_name: Todo_app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database connection string
+      DATABASE_URL: postgresql://user:password@db:5432/todo_db
     # Mount source code for development (optional)
     volumes:
       - ./src:/app/src
 
-  # Service for running tests
+  # 3. Test Runner Service
   tester:
     build: .
-    container_name: 'Todo_tests'
+    container_name: Todo_tests
     # Wait for the app to start
     depends_on:
-      - todo-app
-    # Mount tests and config to run them without rebuilding
+      todo-app:
+        condition: service_started
+      db:
+        condition: service_healthy
     volumes:
       - ./tests:/app/tests
       - ./pytest.ini:/app/pytest.ini
-    # Override the API URL to point to the container service name
     environment:
-      - TODO_API_URL=http://todo-app:8000
-    # Override the default command to run pytest
+      TODO_API_URL: http://todo-app:8000
+      # Tests might need direct DB access for setup/teardown
+      DATABASE_URL: postgresql://user:password@db:5432/todo_db
     command: uv run pytest --verbose
+
+volumes:
+  postgres_data:

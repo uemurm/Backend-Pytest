@@ -21,5 +21,6 @@ COPY src ./src
 # 7. Set environment variables (add .venv to PATH for easier command access)
 ENV PATH="/app/.venv/bin:$PATH"
 
-# 8. Execution command (listening on host 0.0.0.0, all interfaces, is a Docker best practice)
+# 8. Default command to be run when starting a container.
+# listening on host 0.0.0.0, all interfaces, is a Docker best practice)
 CMD ["uv", "run", "uvicorn", "src.todo_app:app", "--host", "0.0.0.0", "--port", "8000"]
