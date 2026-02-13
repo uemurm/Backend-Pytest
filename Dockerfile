@@ -18,8 +18,11 @@ RUN uv sync --frozen --no-dev
 # 6. Copy the source code to the image
 COPY src ./src
 
-# 7. Set environment variables (add .venv to PATH for easier command access)
+# 7. Set environment variables
+# Add .venv to PATH for easier command access
 ENV PATH="/app/.venv/bin:$PATH"
+# Add src to PYTHONPATH so that 'import models' works from anywhere
+ENV PYTHONPATH="/app/src:$PYTHONPATH"
 
 # 8. Default command to be run when starting a container.
 # listening on host 0.0.0.0, all interfaces, is a Docker best practice)
