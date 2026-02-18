@@ -1,5 +1,8 @@
 # Daily Journal
 
+## 2026-02-13 Fri
+* Replaced in-memory DB with PostgreSQL
+
 ## 2026-02-06 Fri
 * 抜けているテスト項目を洗い出した。
 
