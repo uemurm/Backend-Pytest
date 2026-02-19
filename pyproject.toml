@@ -15,3 +15,14 @@ dependencies = [
     "sqlalchemy>=2.0.46",
     "uvicorn>=0.40.0",
 ]
+
+[tool.pytest.ini_options]
+testpaths = [
+    'tests/todo_app',
+    'tests/playwright',
+]
+pythonpath = ['src']
+markers = [
+    'smoke: quick checks',
+    'regression: broader coverage',
+]
