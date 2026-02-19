@@ -17,6 +17,7 @@ dependencies = [
 ]
 
 [tool.pytest.ini_options]
+addopts = '--verbose --maxfail=2'
 testpaths = [
     'tests/todo_app',
     'tests/playwright',
