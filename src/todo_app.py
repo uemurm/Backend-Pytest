@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 import models
 import database
@@ -17,9 +17,7 @@ class TodoSchema(BaseModel):
     title: str
     completed: bool = False
 
-    class Config:
-        # Tell Pydantic to read data from ORM models (not just dicts)
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # --- API Endpoints ---
 
